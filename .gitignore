@@ -15,7 +15,6 @@ dist-ssr
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
 .DS_Store
 *.suo
 *.ntvs*
@@ -25,3 +24,6 @@ dist-ssr
 
 # API keys
 .env
+
+.idea
+.eslintrc.js
