@@ -43,10 +43,18 @@ app.get('/api/persons', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
+  const newPersonNameAlreadyExists = persons
+    .map((p) => p.name)
+    .includes(body.name)
+  const someDataIsMissing = !body.name || !body.number
 
-  if (!body.name) {
+  if (someDataIsMissing) {
     return response.status(400).json({
-      error: 'content missing'
+      error: 'The name or number is missing'
+    })
+  } else if (newPersonNameAlreadyExists) {
+    return response.status(400).json({
+      error: 'The name already exists in the phonebook'
     })
   }
 
