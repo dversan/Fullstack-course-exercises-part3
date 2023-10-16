@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/dversan/Fullstack-course-exercises-part3#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "eslint": "^8.51.0",
