@@ -1,7 +1,3 @@
-const express = require('express')
-const app = express()
-const morgan = require('morgan')
-
 let persons = [
   {
     id: 1,
@@ -25,10 +21,10 @@ let persons = [
   }
 ]
 
-const generateId = () => {
-  const maxId = persons.length > 0 ? Math.max(...persons.map((n) => n.id)) : 0
-  return maxId + 1
-}
+const express = require('express')
+const morgan = require('morgan')
+
+const app = express()
 
 const requestTime = function (req, res, next) {
   req.requestTime = new Date(Date.now()).toString()
@@ -44,6 +40,11 @@ morgan.token('body', function (req) {
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms :body')
 )
+
+const generateId = () => {
+  const maxId = persons.length > 0 ? Math.max(...persons.map((n) => n.id)) : 0
+  return maxId + 1
+}
 
 app.get('/api/persons', (request, response) => {
   response.json(persons)
@@ -101,7 +102,7 @@ app.get('/info', (request, response) => {
   )
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
