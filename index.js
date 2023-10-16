@@ -23,8 +23,10 @@ let persons = [
 
 const express = require('express')
 const morgan = require('morgan')
-
+const cors = require('cors')
 const app = express()
+
+app.use(cors())
 
 const requestTime = function (req, res, next) {
   req.requestTime = new Date(Date.now()).toString()
