@@ -5,12 +5,8 @@ if (process.argv.length < 3) {
   process.exit(1)
 }
 
-const password = process.argv[2]
-
-const url = `mongodb+srv://daversan:${password}@cluster0.y5ll2.mongodb.net/phonebook?retryWrites=true&w=majority`
-
 mongoose.set('strictQuery', false)
-mongoose.connect(url)
+mongoose.connect(process.env.MONGODB_URI)
 
 const personSchema = new mongoose.Schema({
   name: String,
