@@ -13,7 +13,6 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'wrong id format' })
   }
-
   next(error)
 }
 
@@ -39,34 +38,21 @@ app.get('/api/persons', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-  // const newPersonNameAlreadyExists = persons
-  //   .map((p) => p.name)
-  //   .includes(body.name)
-  // const someDataIsMissing = !body.name || !body.number
-  //
-  // if (someDataIsMissing) {
-  //   return response.status(400).json({
-  //     error: 'The name or number is missing'
-  //   })
-  // } else if (newPersonNameAlreadyExists) {
-  //   return response.status(400).json({
-  //     error: 'The name already exists in the phonebook'
-  //   })
-  // }
+  if (body.name === undefined) {
+    return response.status(400).json({ error: 'content missing' })
+  }
 
   const person = new Person({
     name: body.name,
     number: body.number
   })
 
-  if (body.name) {
-    person
-      .save()
-      .then((personAdded) => {
-        response.json(personAdded)
-      })
-      .catch((error) => next(error))
-  }
+  person
+    .save()
+    .then((personAdded) => {
+      response.json(personAdded)
+    })
+    .catch((error) => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
