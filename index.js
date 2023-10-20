@@ -56,7 +56,7 @@ app.post('/api/persons', (request, response, next) => {
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
-  const id = Number(request.params.id)
+  const id = request.params.id
   Person.findById(id)
     .then((person) => {
       if (person) {
@@ -90,11 +90,11 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 app.get('/info', (request, response, next) => {
-  response
-    .send(
-      `<p>Phonebook has info for ${Person.find({}).length} people</p><p>${
-        request._startTime
-      }</p>`
+  Person.find({})
+    .then((result) =>
+      response.send(
+        `Phonebook has info for ${result.length} people<br><br>${request._startTime}`
+      )
     )
     .catch((error) => next(error))
 })
