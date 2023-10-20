@@ -28,7 +28,6 @@ app.use(express.json())
 app.get('/api/persons', (request, response) => {
   Person.find({}).then((persons) => {
     response.json(persons)
-    mongoose.connection.close()
   })
 })
 
