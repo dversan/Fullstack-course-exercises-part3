@@ -92,7 +92,9 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.get('/info', (request, response, next) => {
   response
     .send(
-      `<p>Phonebook has info for ${persons.length} people</p><p>${request._startTime}</p>`
+      `<p>Phonebook has info for ${Person.find({}).length} people</p><p>${
+        request._startTime
+      }</p>`
     )
     .catch((error) => next(error))
 })
