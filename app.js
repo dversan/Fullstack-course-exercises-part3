@@ -2,7 +2,7 @@ const config = require('./utils/config')
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const phonebookRouter = require('./controllers/phonebook')
+const blogsRouter = require('./controllers/blogs')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
@@ -25,9 +25,9 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(middleware.requestLogger)
 
-app.use('/', phonebookRouter)
+app.use('/', blogsRouter)
 
 app.use(middleware.unknownEndpoint)
-app.use(middleware.errorHandler)
+// app.use(middleware.errorHandler)
 
 module.exports = app
