@@ -8,7 +8,23 @@ const totalLikes = (blogs) => {
     .reduce((acc, currentValue) => acc + currentValue, 0)
 }
 
+const favoriteBlog = (blogs) => {
+  const likesList = blogs.map((blog) => blog.likes)
+  const maxNumberOfLikes = Math.max(...likesList)
+
+  const mostPopularBlogs = blogs.filter(
+    (blog) => blog.likes === maxNumberOfLikes
+  )
+
+  return mostPopularBlogs.map((blog) => ({
+    title: blog.title,
+    author: blog.author,
+    likes: blog.likes
+  }))
+}
+
 module.exports = {
   dummy,
-  totalLikes
+  totalLikes,
+  favoriteBlog
 }
