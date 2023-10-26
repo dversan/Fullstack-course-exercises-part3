@@ -20,12 +20,10 @@ describe('Testing favoriteBlog function', () => {
   test('Should show the blog with the max number of likes', () => {
     const result = listHelper.favoriteBlog(blogsSample)
 
-    expect(result).toEqual([
-      {
-        title: 'Canonical string reduction',
-        author: 'Edsger W. Dijkstra',
-        likes: 12
-      }
-    ])
+    expect(result).toEqual({
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      likes: 12
+    })
   })
 })
