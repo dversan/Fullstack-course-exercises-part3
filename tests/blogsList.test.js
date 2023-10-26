@@ -8,7 +8,7 @@ test('dummy returns one', () => {
   expect(result).toBe(1)
 })
 
-describe('Calculating the total likes', () => {
+describe('Testing totalLikes function', () => {
   test('Total amount of likes of all blogs should be 36', () => {
     const result = listHelper.totalLikes(blogsSample)
 
@@ -33,5 +33,13 @@ describe('Testing mostBlogs function', () => {
     const result = listHelper.mostBlogs(blogsSample)
 
     expect(result).toEqual({ author: 'Robert C. Martin', blogs: 3 })
+  })
+})
+
+describe('Testing mostLikes function', () => {
+  test('Should return a object with the name of the author with more likes and the amount of likes', () => {
+    const result = listHelper.mostLikes(blogsSample)
+
+    expect(result).toEqual({ author: 'Edsger W. Dijkstra', likes: 17 })
   })
 })

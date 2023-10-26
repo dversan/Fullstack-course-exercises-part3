@@ -1,5 +1,3 @@
-const sampleBlogs = require('../tests/dataSamples')
-
 const dummy = (blogs) => {
   return 1
 }
@@ -25,7 +23,7 @@ const favoriteBlog = (blogs) => {
   }))[0]
 }
 
-const mostBlogs = (blogs) => {
+const blogsGroupedByAuthor = (blogs) => {
   const authorsWithSomeBlog = [
     ...new Map(blogs.map((b) => [b.author, b])).values()
   ]
@@ -33,11 +31,11 @@ const mostBlogs = (blogs) => {
   const groupBlogsByAuthor = (blog) =>
     blogs.filter((b) => b.author === blog.author)
 
-  const blogsGroupedByAuthor = authorsWithSomeBlog.map((blog) =>
-    groupBlogsByAuthor(blog)
-  )
+  return authorsWithSomeBlog.map((blog) => groupBlogsByAuthor(blog))
+}
 
-  return blogsGroupedByAuthor
+const mostBlogs = (blogs) => {
+  return blogsGroupedByAuthor(blogs)
     .map((blog) => ({
       author: blog[0].author,
       blogs: blog.length
@@ -45,9 +43,25 @@ const mostBlogs = (blogs) => {
     .reduce((max, current) => (max.blogs > current.blogs ? max : current))
 }
 
+const mostLikes = (blogs) => {
+  return blogsGroupedByAuthor(blogs)
+    .map((blog) => {
+      const totalLikesPerAuthor = blog.reduce(
+        (sum, blog) => sum + blog.likes,
+        0
+      )
+      return {
+        author: blog[0].author,
+        likes: totalLikesPerAuthor
+      }
+    })
+    .reduce((max, current) => (max.likes > current.likes ? max : current))
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
