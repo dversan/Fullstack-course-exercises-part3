@@ -17,7 +17,7 @@ describe('Calculating the total likes', () => {
 })
 
 describe('Testing favoriteBlog function', () => {
-  test('Should show the blog with the max number of likes', () => {
+  test('Should return the blog with the max number of likes', () => {
     const result = listHelper.favoriteBlog(blogsSample)
 
     expect(result).toEqual({
@@ -25,5 +25,13 @@ describe('Testing favoriteBlog function', () => {
       author: 'Edsger W. Dijkstra',
       likes: 12
     })
+  })
+})
+
+describe('Testing mostBlogs function', () => {
+  test('Should return a object with the name of the author with more blogs and the amount of blogs', () => {
+    const result = listHelper.mostBlogs(blogsSample)
+
+    expect(result).toEqual({ author: 'Robert C. Martin', blogs: 3 })
   })
 })
