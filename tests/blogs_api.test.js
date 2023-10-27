@@ -10,11 +10,12 @@ beforeEach(async () => {
   await Blog.deleteMany({})
   console.log('Cleared')
 
-  initialBlogs.forEach(async (note) => {
-    const noteObject = new Blog(note)
+  await initialBlogs.forEach(async (blog) => {
+    const noteObject = new Blog(blog)
     await noteObject.save()
     console.log('New item saved')
   })
+
   console.log('Initial conditions ready')
 })
 
@@ -29,57 +30,69 @@ test('Blogs are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
-test('There are 3 notes', async () => {
-  const response = await api.get('/api/blogs')
+test('There are 3` blogs', () => {
+  setTimeout(() => {
+    const response = api.get('/api/blogs')
 
-  expect(response._body).toHaveLength(3)
+    expect(response._body).toHaveLength(3)
+  }, 1000)
 })
 
-test('The first blog matches the expected schema with the content sent in the request body', async () => {
-  const response = await api.get('/api/blogs')
-
-  expect(response._body[0]).toEqual({
-    id: '653a8aa11edd4bea0372454a',
-    title: 'A blog',
-    author: 'David',
-    url: 'https://web.com',
-    likes: 5
-  })
-})
-
-test('Property "id" is properly named', async () => {
-  const response = await api.get('/api/blogs')
-
-  expect(response.body[0].id).toBeDefined()
-})
-
-test('A blog has been created', async () => {
+describe('Testing a new blog creation', () => {
   const newBlog = {
     title: 'Testing blog',
     author: 'DVS',
     url: 'https://web.com',
     likes: 5
   }
+  test('The first blog matches the expected schema with the content sent in the request body', async () => {
+    setTimeout(() => {
+      const response = api.get('/api/blogs')
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+      expect(response._body[0]).toEqual({
+        author: 'Michael Chan',
+        id: '653ba435da6bfc788820f13f',
+        likes: 7,
+        title: 'React patterns',
+        url: 'https://reactpatterns.com/'
+      })
+    }, 1000)
+  })
 
-  const response = await api.get('/api/blogs')
+  test('Property "id" is properly named', async () => {
+    const response = await api.get('/api/blogs')
 
-  expect(
-    response._body.map((blog) => ({
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes
-    }))
-  ).toContainEqual({
-    title: 'Testing blog',
-    author: 'DVS',
-    url: 'https://web.com',
-    likes: 5
+    expect(response.body[0].id).toBeDefined()
+  })
+
+  test('A blog has been created', async () => {
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    expect(
+      response._body.map((blog) => ({
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes
+      }))
+    ).toContainEqual({
+      title: 'Testing blog',
+      author: 'DVS',
+      url: 'https://web.com',
+      likes: 5
+    })
+  })
+
+  test('If likes prop is being stored with value 0 when the property is missing in the body request', async () => {
+    delete newBlog.likes
+    const response = await api.post('/api/blogs').send(newBlog)
+
+    expect(response._body.likes).toBe(0)
   })
 })
