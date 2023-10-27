@@ -4,6 +4,10 @@ const app = require('../app')
 
 const api = supertest(app)
 
+afterAll(async () => {
+  await mongoose.connection.close()
+})
+
 test('Blogs are returned as json', async () => {
   await api
     .get('/api/blogs')
@@ -11,20 +15,13 @@ test('Blogs are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
-afterAll(async () => {
-  await mongoose.connection.close()
-})
-
 test('There are 3 notes', async () => {
   const response = await api.get('/api/blogs')
 
   expect(response._body).toHaveLength(3)
 })
-afterAll(async () => {
-  await mongoose.connection.close()
-})
 
-test('The first note is about HTTP methods', async () => {
+test('The first blog matches the expected schema with the content sent in the request body', async () => {
   const response = await api.get('/api/blogs')
 
   expect(response._body[0]).toEqual({
@@ -35,6 +32,9 @@ test('The first note is about HTTP methods', async () => {
     likes: 5
   })
 })
-afterAll(async () => {
-  await mongoose.connection.close()
+
+test('Verify that the property "id" is properly named', async () => {
+  const response = await api.get('/api/blogs')
+
+  expect(response.body[0].id).toBeDefined()
 })
