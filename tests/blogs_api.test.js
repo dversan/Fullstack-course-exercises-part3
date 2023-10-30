@@ -9,46 +9,44 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-
-  for (const blog of initialBlogs) {
-    const blogObject = new Blog(blog)
-    await blogObject.save()
-  }
+  await Blog.insertMany(initialBlogs)
 })
 
 afterAll(async () => {
   await mongoose.connection.close()
 })
 
-test('Blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-})
-
-test('There are 3` blogs', async () => {
-  const response = await api.get('/api/blogs')
-
-  expect(response._body).toHaveLength(3)
-})
-
-test('The first blog matches the expected schema with the content sent in the request body', async () => {
-  const response = await api.get('/api/blogs')
-
-  expect(response._body[0]).toEqual({
-    author: 'Michael Chan',
-    id: response._body[0].id,
-    likes: 7,
-    title: 'React patterns',
-    url: 'https://reactpatterns.com/'
+describe('when there are some intial blogs saved', () => {
+  test('Blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
   })
-})
 
-test('Property "id" is properly named', async () => {
-  const response = await api.get('/api/blogs')
+  test('All blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
 
-  expect(response.body[0].id).toBeDefined()
+    expect(response._body).toHaveLength(initialBlogs.length)
+  })
+
+  test('The first blog matches the expected schema with the content sent in the request body', async () => {
+    const response = await api.get('/api/blogs')
+
+    expect(response._body[0]).toEqual({
+      author: 'Michael Chan',
+      id: response._body[0].id,
+      likes: 7,
+      title: 'React patterns',
+      url: 'https://reactpatterns.com/'
+    })
+  })
+
+  test('Property "id" is properly named', async () => {
+    const response = await api.get('/api/blogs')
+
+    expect(response.body[0].id).toBeDefined()
+  })
 })
 
 describe('Testing a new blog creation', () => {
