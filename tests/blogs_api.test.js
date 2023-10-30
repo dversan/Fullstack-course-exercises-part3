@@ -11,7 +11,7 @@ beforeEach(async () => {
   await Blog.insertMany(initialBlogs)
 })
 
-describe('when there are some intial blogs saved', () => {
+describe('When there are some intial blogs saved', () => {
   test('Blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -86,8 +86,8 @@ describe('Testing a new blog creation', () => {
   })
 })
 
-describe('deletion of a blog', () => {
-  test('succeeds with status code 204 if id is valid', async () => {
+describe('Deletion of a blog', () => {
+  test('Succeeds with status code 204 if id is valid', async () => {
     const initialBlogsInDb = await Blog.find({})
     const blogToDelete = initialBlogsInDb[0]._id
 
@@ -100,6 +100,25 @@ describe('deletion of a blog', () => {
     const blogsIds = blogsInDbAtEnd.map((r) => r._id)
 
     expect(blogsIds).not.toContain(blogToDelete._id)
+  })
+})
+
+describe('Updating a blog', () => {
+  test('Succeeds with status code 204 if id is valid', async () => {
+    const initialBlogsInDb = await Blog.find({})
+    const blogToUpdate = initialBlogsInDb[0]._id
+    const updatedBlogTitle = 'Blog updated'
+
+    const blogWithUpdatedValues = { ...blogToUpdate, title: updatedBlogTitle }
+
+    await api
+      .put(`/api/blogs/${blogToUpdate}`)
+      .send(blogWithUpdatedValues)
+      .expect(201)
+
+    const blogsInDbAtEnd = await Blog.find({})
+
+    expect(blogsInDbAtEnd[0].title).toBe(updatedBlogTitle)
   })
 })
 
