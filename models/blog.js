@@ -1,9 +1,15 @@
 const mongoose = require('mongoose')
 
 const blogSchema = new mongoose.Schema({
-  title: String,
+  title: {
+    type: String,
+    required: [true, 'Blog title is required']
+  },
   author: String,
-  url: String,
+  url: {
+    type: String,
+    required: [true, 'Blog URL is required']
+  },
   likes: Number
 })
 
