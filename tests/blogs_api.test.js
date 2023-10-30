@@ -2,18 +2,13 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
-const initialBlogs = require('../tests/dataSamples').initialBlogs
-const newBlog = require('../tests/dataSamples').newBlog
+const { initialBlogs, newBlog } = require('../tests/dataSamples')
 
 const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(initialBlogs)
-})
-
-afterAll(async () => {
-  await mongoose.connection.close()
 })
 
 describe('when there are some intial blogs saved', () => {
@@ -41,7 +36,9 @@ describe('when there are some intial blogs saved', () => {
       url: 'https://reactpatterns.com/'
     })
   })
+})
 
+describe('Viewing a specific note', () => {
   test('Property "id" is properly named', async () => {
     const response = await api.get('/api/blogs')
 
@@ -77,12 +74,35 @@ describe('Testing a new blog creation', () => {
   })
 
   test('An error "404 Bad Request" is send when the form is submitted and title or url are empty', async () => {
-    const response = await api
+    const blogsInDb = await Blog.find({})
+
+    await api
       .post('/api/blogs')
       .send({ ...newBlog, title: undefined })
       .send({ ...newBlog, url: undefined })
       .expect(400)
 
-    expect(response.res.statusMessage).toBe('Bad Request')
+    expect(blogsInDb).toHaveLength(initialBlogs.length)
   })
+})
+
+describe('deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const initialBlogsInDb = await Blog.find({})
+    const blogToDelete = initialBlogsInDb[0]._id
+
+    await api.delete(`/api/blogs/${blogToDelete}`).expect(204)
+
+    const blogsInDbAtEnd = await Blog.find({})
+
+    expect(blogsInDbAtEnd).toHaveLength(initialBlogsInDb.length - 1)
+
+    const blogsIds = blogsInDbAtEnd.map((r) => r._id)
+
+    expect(blogsIds).not.toContain(blogToDelete._id)
+  })
+})
+
+afterAll(async () => {
+  await mongoose.connection.close()
 })
