@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/dversan/Fullstack-course-exercises-part3#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
