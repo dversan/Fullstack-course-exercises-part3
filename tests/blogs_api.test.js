@@ -128,7 +128,7 @@ afterAll(async () => {
   await mongoose.connection.close()
 })
 
-describe('when there is initially one user in db', () => {
+describe('Testing a new user creation', () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
@@ -138,9 +138,8 @@ describe('when there is initially one user in db', () => {
     await user.save()
   })
 
-  test('creation succeeds with a fresh username', async () => {
+  test('Creation succeeds with a fresh username', async () => {
     const usersAtStart = await User.find()
-
     const newUser = {
       username: 'mluukkai',
       name: 'Matti Luukkainen',
@@ -159,4 +158,25 @@ describe('when there is initially one user in db', () => {
     const usernames = usersAtEnd.map((u) => u.username)
     expect(usernames).toContain(newUser.username)
   })
+
+  // test('created user should be unique and an error should be shown if exists', async () => {
+  //   const usersAtStart = await User.find({})
+  //
+  //   const newUser = {
+  //     username: 'root',
+  //     name: 'Superuser',
+  //     password: 'salainen'
+  //   }
+  //
+  //   const result = await api
+  //     .post('/api/users')
+  //     .send(newUser)
+  //     .expect(400)
+  //     .expect('Content-Type', /application\/json/)
+  //
+  //   expect(result.body.error).toContain('expected `username` to be unique')
+  //
+  //   const usersAtEnd = await User.find({})
+  //   expect(usersAtEnd).toEqual(usersAtStart)
+  // })
 })
