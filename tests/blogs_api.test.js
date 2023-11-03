@@ -4,7 +4,7 @@ const app = require('../app')
 const Blog = require('../models/blog')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
-const { initialBlogs, newBlog } = require('../tests/dataSamples')
+const { initialBlogs, newBlog, newUser } = require('../tests/dataSamples')
 
 const api = supertest(app)
 
@@ -140,11 +140,6 @@ describe('Testing a new user creation', () => {
 
   test('Creation succeeds with a fresh username', async () => {
     const usersAtStart = await User.find()
-    const newUser = {
-      username: 'mluukkai',
-      name: 'Matti Luukkainen',
-      password: 'salainen'
-    }
 
     await api
       .post('/api/users')
@@ -157,6 +152,26 @@ describe('Testing a new user creation', () => {
 
     const usernames = usersAtEnd.map((u) => u.username)
     expect(usernames).toContain(newUser.username)
+  })
+
+  test('User creation fails with a username or password shorter than 3 characters and the response return a suitable error message', async () => {
+    const userWithInvalidUsername = { ...newUser, username: 'da' }
+    const userWithInvalidPassword = { ...newUser, password: '12' }
+
+    const response = (invalidUser) =>
+      api.post('/api/users').send(invalidUser).expect(400)
+
+    const invalidUsernameResponse = await response(userWithInvalidUsername)
+
+    expect(invalidUsernameResponse.text).toContain(
+      'User validation failed: username: Path `username` (`da`) is shorter than the minimum allowed length (3).'
+    )
+
+    const invalidPasswordResponse = await response(userWithInvalidPassword)
+
+    expect(invalidPasswordResponse.text).toContain(
+      '{"error":"Password is shorter than the minimum allowed length (3)"}'
+    )
   })
 
   // test('created user should be unique and an error should be shown if exists', async () => {

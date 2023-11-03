@@ -1,3 +1,9 @@
+const newUser = {
+  username: 'mluukkai',
+  name: 'Matti Luukkainen',
+  password: 'salainen'
+}
+
 const initialBlogs = [
   {
     title: 'React patterns',
@@ -77,4 +83,4 @@ const blogs = [
   }
 ]
 
-module.exports = { blogs, initialBlogs, newBlog }
+module.exports = { blogs, initialBlogs, newBlog, newUser }
