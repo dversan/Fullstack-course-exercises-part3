@@ -11,7 +11,7 @@ const blogSchema = new mongoose.Schema({
     required: [true, 'Blog URL is required']
   },
   likes: Number,
-  userId: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }

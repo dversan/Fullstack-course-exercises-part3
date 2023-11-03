@@ -40,7 +40,7 @@ describe('When there are some intial blogs saved', () => {
   })
 })
 
-describe('Viewing a specific note', () => {
+describe('Viewing a specific blog', () => {
   test('Property "id" is properly named', async () => {
     const response = await api.get('/api/blogs')
 
@@ -133,7 +133,7 @@ describe('Testing a new user creation', () => {
     await User.deleteMany({})
 
     const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', passwordHash })
+    const user = new User({ username: 'root', name: 'DVS', passwordHash })
 
     await user.save()
   })
