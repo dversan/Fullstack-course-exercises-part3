@@ -19,9 +19,17 @@ userRouter.post('/api/users', async (request, response) => {
     passwordHash
   })
 
-  const savedUser = await user.save()
-
-  response.status(201).json(savedUser)
+  if (password.length >= 3) {
+    const savedUser = await user.save().catch((error) => {
+      response.status(400)
+      response.send(error.message)
+    })
+    response.status(201).json(savedUser)
+  } else {
+    return response.status(400).json({
+      error: 'Password is shorter than the minimum allowed length (3)'
+    })
+  }
 })
 
 module.exports = userRouter
