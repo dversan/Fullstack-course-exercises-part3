@@ -24,7 +24,7 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-const authUserIdExtractor = (request, response, next) => {
+const authUserExtractor = (request, response, next) => {
   const authorization = request.get('authorization')
   if (authorization && authorization.startsWith('Bearer ')) {
     request.token = authorization.replace('Bearer ', '')
@@ -32,7 +32,7 @@ const authUserIdExtractor = (request, response, next) => {
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
     if (decodedToken.id) {
-      request.authUserId = decodedToken.id
+      request.authUser = decodedToken
       next()
     } else {
       response.status(401).json({ error: 'token invalid' })
@@ -47,5 +47,5 @@ module.exports = {
   errorHandler,
   requestLogger,
   unknownEndpoint,
-  authUserIdExtractor
+  authUserExtractor
 }
