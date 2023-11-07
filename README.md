@@ -1,6 +1,6 @@
-# Fullstack-course-exercises-part3
+# Fullstack-course-exercises
 
-Helsinki University fullstack course part 3 exercises
+Exercises of Helsinki University fullstack course. Parts 3 and 4.
 
 ---
 
