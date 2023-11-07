@@ -1,10 +1,13 @@
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
 
 const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'wrong id format' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
+  } else if (error.name === 'JsonWebTokenError') {
+    return response.status(401).json({ error: error.message })
   }
   next(error)
 }
@@ -21,8 +24,28 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
+const authUserExtractor = (request, response, next) => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    request.token = authorization.replace('Bearer ', '')
+
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+    if (decodedToken.id) {
+      request.authUser = decodedToken
+      next()
+    } else {
+      response.status(401).json({ error: 'token invalid' })
+      next()
+    }
+  } else {
+    next()
+  }
+}
+
 module.exports = {
   errorHandler,
   requestLogger,
-  unknownEndpoint
+  unknownEndpoint,
+  authUserExtractor
 }

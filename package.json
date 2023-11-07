@@ -1,12 +1,12 @@
 {
   "name": "fullstack-course-exercises-part3",
   "version": "1.0.0",
-  "description": "Backend for a Fullstacj course exercise",
+  "description": "Backend for a Fullstack course exercise",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
     "build:ui": "rm -rf dist && cd ../Fullstack-course-exercises && npm run build && cp -r dist ../Fullstack-course-exercises-part3",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
   },
@@ -21,18 +21,27 @@
   },
   "homepage": "https://github.com/dversan/Fullstack-course-exercises-part3#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.3",
+    "mongoose-unique-validator": "^4.0.0",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
+    "jest": "^29.7.0",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
-    "standard": "^17.1.0"
+    "standard": "^17.1.0",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "prettier": {
     "semi": false,
