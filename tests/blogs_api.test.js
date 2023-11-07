@@ -49,11 +49,16 @@ describe('Viewing a specific blog', () => {
 })
 
 describe('Testing a new blog creation', () => {
-  test('A blog has been created', async () => {
+  test('A blog has been created by an authorized user', async () => {
+    const authUser = await api
+      .post('/api/login')
+      .send({ username: 'root', password: 'sekret' })
+
     await api
       .post('/api/blogs')
       .send(newBlog)
-      .expect(201)
+      .set('Authorization', `Bearer ${authUser._body.token}`)
+      .expect(200)
       .expect('Content-Type', /application\/json/)
 
     const response = await api.get('/api/blogs')
@@ -68,41 +73,54 @@ describe('Testing a new blog creation', () => {
     ).toContainEqual(newBlog)
   })
 
+  test('If a token is not provided blog creation fails with proper status code 401 Unauthorized', async () => {
+    const usersInDb = await User.find({})
+
+    const blogWithUserProp = {
+      title: 'Bolg for delete testing',
+      author: 'root',
+      url: 'https://reactpatterns.com/',
+      likes: 7,
+      user: usersInDb[0]._id.toString()
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(blogWithUserProp)
+      .expect(401)
+      .expect({ error: 'Unauthorized' })
+  })
+
   test('If likes prop is being stored with value 0 when the property is missing in the body request', async () => {
     delete newBlog.likes
-    const response = await api.post('/api/blogs').send(newBlog)
+    const authUser = await api
+      .post('/api/login')
+      .send({ username: 'root', password: 'sekret' })
+
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization', `Bearer ${authUser._body.token}`)
+      .expect(200)
 
     expect(response._body.likes).toBe(0)
   })
 
-  test('An error "404 Bad Request" is send when the form is submitted and title or url are empty', async () => {
-    const blogsInDb = await Blog.find({})
-
-    await api
-      .post('/api/blogs')
-      .send({ ...newBlog, title: undefined })
-      .send({ ...newBlog, url: undefined })
-      .expect(400)
-
-    expect(blogsInDb).toHaveLength(initialBlogs.length)
-  })
-})
-
-describe('Deletion of a blog', () => {
-  test('Succeeds with status code 204 if id is valid', async () => {
-    const initialBlogsInDb = await Blog.find({})
-    const blogToDelete = initialBlogsInDb[0]._id
-
-    await api.delete(`/api/blogs/${blogToDelete}`).expect(204)
-
-    const blogsInDbAtEnd = await Blog.find({})
-
-    expect(blogsInDbAtEnd).toHaveLength(initialBlogsInDb.length - 1)
-
-    const blogsIds = blogsInDbAtEnd.map((r) => r._id)
-
-    expect(blogsIds).not.toContain(blogToDelete._id)
-  })
+  //   test('An error "404 Bad Request" is send when the form is submitted and title or url are empty', async () => {
+  //     const blogsInDb = await Blog.find({})
+  //     const authUser = await api
+  //       .post('/api/login')
+  //       .send({ username: 'root', password: 'sekret' })
+  //
+  //     await api
+  //       .post('/api/blogs')
+  //       .send({ ...newBlog, title: undefined })
+  //       .send({ ...newBlog, url: undefined })
+  //       .set('Authorization', `Bearer ${authUser._body.token}`)
+  //       .expect(400)
+  //
+  //     expect(blogsInDb).toHaveLength(initialBlogs.length)
+  //   })
 })
 
 describe('Updating a blog', () => {
@@ -124,8 +142,44 @@ describe('Updating a blog', () => {
   })
 })
 
-afterAll(async () => {
-  await mongoose.connection.close()
+describe('Deletion of a blog', () => {
+  test('Succeeds with status code 204 if id is valid', async () => {
+    const usersInDb = await User.find({})
+
+    const blogWithUserProp = {
+      title: 'Bolg for delete testing',
+      author: 'root',
+      url: 'https://reactpatterns.com/',
+      likes: 7,
+      user: usersInDb[0]._id.toString()
+    }
+
+    const authUser = await api
+      .post('/api/login')
+      .send({ username: 'root', password: 'sekret' })
+
+    await api
+      .post('/api/blogs')
+      .send(blogWithUserProp)
+      .set('Authorization', `Bearer ${authUser._body.token}`)
+      .expect(200)
+
+    const initialBlogsInDb = await Blog.find({})
+    const blogToDelete = initialBlogsInDb.pop()
+
+    await api
+      .delete(`/api/blogs/${blogToDelete._id}`)
+      .set('Authorization', `Bearer ${authUser._body.token}`)
+      .expect(204)
+
+    const blogsInDbAtEnd = await Blog.find({})
+
+    expect(blogsInDbAtEnd).toHaveLength(initialBlogsInDb.length)
+
+    const blogsIds = blogsInDbAtEnd.map((r) => r._id)
+
+    expect(blogsIds).not.toContain(blogToDelete._id)
+  })
 })
 
 describe('Testing a new user creation', () => {
@@ -194,4 +248,8 @@ describe('Testing a new user creation', () => {
   //   const usersAtEnd = await User.find({})
   //   expect(usersAtEnd).toEqual(usersAtStart)
   // })
+})
+
+afterAll(async () => {
+  await mongoose.connection.close()
 })

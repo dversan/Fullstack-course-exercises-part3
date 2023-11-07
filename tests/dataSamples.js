@@ -4,6 +4,11 @@ const newUser = {
   password: 'salainen'
 }
 
+const authUser = {
+  username: 'root',
+  password: 'sekret'
+}
+
 const initialBlogs = [
   {
     title: 'React patterns',
@@ -27,7 +32,7 @@ const initialBlogs = [
 
 const newBlog = {
   title: 'Testing blog',
-  author: 'DVS',
+  author: 'Michael Chan',
   url: 'https://web.com',
   likes: 5
 }
@@ -83,4 +88,10 @@ const blogs = [
   }
 ]
 
-module.exports = { blogs, initialBlogs, newBlog, newUser }
+module.exports = {
+  blogs,
+  initialBlogs,
+  newBlog,
+  newUser,
+  authUser
+}

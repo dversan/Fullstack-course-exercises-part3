@@ -13,25 +13,30 @@ blogsRouter.post(
   middleware.authUserExtractor,
   async (request, response) => {
     const body = request.body
-    const authUserId = request.authUser.id
 
-    const user = await User.findById(authUserId)
+    if (request.authUser) {
+      const authUserId = request.authUser.id
 
-    const blog = new Blog({
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes ? body.likes : 0,
-      user: user._id
-    })
+      const user = await User.findById(authUserId)
 
-    const savedBlog = await blog.save()
+      const blog = new Blog({
+        title: body.title,
+        author: body.author,
+        url: body.url,
+        likes: body.likes ? body.likes : 0,
+        user: user._id
+      })
 
-    user.blogs = user.blogs.concat(savedBlog._id)
+      const savedBlog = await blog.save()
 
-    await user.save()
+      user.blogs = user.blogs.concat(savedBlog._id)
 
-    response.json(savedBlog)
+      await user.save()
+
+      response.json(savedBlog)
+    } else {
+      response.status(401).json({ error: 'Unauthorized' })
+    }
   }
 )
 
