@@ -8,7 +8,9 @@
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
     "build:ui": "rm -rf dist && cd ../Fullstack-course-exercises && npm run build && cp -r dist ../Fullstack-course-exercises-part3",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
+    "lint": "eslint .",
+    "start:test": "NODE_ENV=test node index.js"
   },
   "repository": {
     "type": "git",
